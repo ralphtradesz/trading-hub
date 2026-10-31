@@ -25,10 +25,12 @@ internal static class Program
         if (!Services.SingleInstance.Claim(Services.AppPaths.Root)) return;
 
         WaitForDisplay();
+        LoadLanguage();
         try
         {
             BuildAvaloniaApp().AfterSetup(_ =>
             {
+                Localization.Lang.Install();
                 // un error en un control se registra y la app sigue andando (no se cierra en pleno trading)
                 Avalonia.Threading.Dispatcher.UIThread.UnhandledException += (_, e) =>
                 {
@@ -41,6 +43,30 @@ internal static class Program
         {
             CrashLog.Write(ex);
             throw;
+        }
+    }
+
+    /// <summary>
+    /// El idioma de la interfaz: el elegido en Ajustes o, la primera vez, el del sistema (quien ya usaba la app sigue en
+    /// español). Queda guardado para que no cambie si después cambia el idioma de la computadora.
+    /// </summary>
+    private static void LoadLanguage()
+    {
+        try
+        {
+            bool existing = Services.AppSettings.Saved;
+            var s = Services.AppSettings.Load();
+            if (s.Language == null)
+            {
+                s.Language = Localization.Lang.Default(existing);
+                s.Save();
+            }
+
+            Localization.Lang.Load(s.Language);
+        }
+        catch (Exception ex)
+        {
+            CrashLog.Write(ex);
         }
     }
 

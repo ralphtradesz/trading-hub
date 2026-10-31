@@ -18,7 +18,7 @@ namespace TradingHub.App.Views;
 /// </summary>
 internal sealed partial class LiveView : UserControl, IPage
 {
-    private static readonly CultureInfo Es = new("es-AR");
+    private static readonly CultureInfo Es = TradingHub.Common.UiCulture.Current;
     private static readonly CultureInfo Inv = CultureInfo.InvariantCulture;
     private readonly AppServices _svc;
     private readonly Action<string> _status;

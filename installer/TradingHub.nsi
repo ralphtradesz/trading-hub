@@ -1,5 +1,6 @@
 ﻿; Instalador de Trading Hub para Windows: por usuario (no pide permisos de administrador), con accesos en el menú
-; Inicio y el escritorio, desinstalador en «Aplicaciones instaladas» y la opción de abrirla al terminar.
+; Inicio y el escritorio, desinstalador en «Aplicaciones instaladas» y la opción de abrirla al terminar. Habla el idioma
+; de Windows si es español o chino; si no, inglés (la app hace lo mismo la primera vez que se abre).
 ;
 ; Lo arman build-windows.ps1 (en Windows) y build-windows.sh (en Mac o Linux, con «brew install makensis»):
 ;   makensis -DVERSION=1.1.0 -DARCH=x64 -DSRC=<carpeta con TradingHub.exe publicado> -DOUT=<instalador.exe> installer/TradingHub.nsi
@@ -41,24 +42,40 @@ ManifestDPIAware true
 BrandingText "Trading Hub ${VERSION}"
 VIProductVersion "${VERSION}.0"
 VIAddVersionKey "ProductName" "${NAME}"
-VIAddVersionKey "FileDescription" "Instalador de ${NAME}"
+VIAddVersionKey "FileDescription" "${NAME} Setup"
 VIAddVersionKey "FileVersion" "${VERSION}"
 VIAddVersionKey "ProductVersion" "${VERSION}"
-VIAddVersionKey "LegalCopyright" "Licencia MIT con Commons Clause"
+VIAddVersionKey "LegalCopyright" "MIT License with Commons Clause"
 
 !define MUI_ICON "..\src\TradingHub.App\Assets\tradinghub.ico"
 !define MUI_UNICON "..\src\TradingHub.App\Assets\tradinghub.ico"
 !define MUI_ABORTWARNING
-!define MUI_WELCOMEPAGE_TEXT "Esto instala Trading Hub ${VERSION} en tu PC.$\r$\n$\r$\nSi ya la tenés, se actualiza: tus conexiones, gráficos, estrategias e indicadores quedan como están.$\r$\n$\r$\nTocá Instalar para seguir."
+!define MUI_WELCOMEPAGE_TEXT "$(WelcomeText)"
 !define MUI_FINISHPAGE_RUN "$INSTDIR\${EXE}"
-!define MUI_FINISHPAGE_RUN_TEXT "Abrir Trading Hub"
+!define MUI_FINISHPAGE_RUN_TEXT "$(OpenApp)"
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
+; el primero es el de un Windows en otro idioma
+!insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "Spanish"
+!insertmacro MUI_LANGUAGE "SimpChinese"
+
+LangString WelcomeText ${LANG_ENGLISH} "This installs Trading Hub ${VERSION} on your PC.$\r$\n$\r$\nIf you already have it, it gets updated: your connections, charts, strategies and indicators stay as they are.$\r$\n$\r$\nClick Install to continue."
+LangString WelcomeText ${LANG_SPANISH} "Esto instala Trading Hub ${VERSION} en tu PC.$\r$\n$\r$\nSi ya la tenés, se actualiza: tus conexiones, gráficos, estrategias e indicadores quedan como están.$\r$\n$\r$\nTocá Instalar para seguir."
+LangString WelcomeText ${LANG_SIMPCHINESE} "这将在你的电脑上安装 Trading Hub ${VERSION}。$\r$\n$\r$\n如果已经安装，会直接更新：你的连接、图表、策略和指标都保持不变。$\r$\n$\r$\n点击“安装”继续。"
+LangString OpenApp ${LANG_ENGLISH} "Open Trading Hub"
+LangString OpenApp ${LANG_SPANISH} "Abrir Trading Hub"
+LangString OpenApp ${LANG_SIMPCHINESE} "打开 Trading Hub"
+LangString StillOpen ${LANG_ENGLISH} "Trading Hub is open. Close it (if you have trades or strategies running, leave them as you want first) and click Retry."
+LangString StillOpen ${LANG_SPANISH} "Trading Hub está abierta. Cerrala (si tenés operaciones o estrategias corriendo, primero dejalas como quieras) y tocá Reintentar."
+LangString StillOpen ${LANG_SIMPCHINESE} "Trading Hub 正在运行。请先关闭它（如果有交易或策略在运行，请先按你的需要处理好），然后点击“重试”。"
+LangString StillOpenUn ${LANG_ENGLISH} "Trading Hub is open. Close it and click Retry."
+LangString StillOpenUn ${LANG_SPANISH} "Trading Hub está abierta. Cerrala y tocá Reintentar."
+LangString StillOpenUn ${LANG_SIMPCHINESE} "Trading Hub 正在运行。请关闭它，然后点击“重试”。"
 
 ; Si está abierta, Windows no deja reemplazar sus archivos: pide cerrarla (sin cerrarla a la fuerza, por si está operando)
 Function WaitClosed
@@ -70,7 +87,7 @@ Function WaitClosed
     ${If} $2 == ""
       ${Break}
     ${EndIf}
-    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "Trading Hub está abierta. Cerrala (si tenés operaciones o estrategias corriendo, primero dejalas como quieras) y tocá Reintentar." /SD IDCANCEL IDRETRY +2
+    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$(StillOpen)" /SD IDCANCEL IDRETRY +2
     Abort
   ${Loop}
 FunctionEnd
@@ -84,7 +101,7 @@ Function un.WaitClosed
     ${If} $2 == ""
       ${Break}
     ${EndIf}
-    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "Trading Hub está abierta. Cerrala y tocá Reintentar." /SD IDCANCEL IDRETRY +2
+    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "$(StillOpenUn)" /SD IDCANCEL IDRETRY +2
     Abort
   ${Loop}
 FunctionEnd

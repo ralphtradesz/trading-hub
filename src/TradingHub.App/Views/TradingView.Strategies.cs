@@ -465,7 +465,7 @@ public sealed partial class TradingView
     private string LiveStatus(ChartStrategy cs, LiveStrategyRunner runner)
     {
         decimal units = runner.UnitsFor(LiveCenter.QuantityOf(runner.StrategyInstance.GetParameters()));
-        string each = units > 0 ? $"{units.ToString("0.####", CultureInfo.GetCultureInfo("es-AR"))} {runner.ExecInstrument.Symbol} por orden" : "tamaño en cero";
+        string each = units > 0 ? $"{units.ToString("0.####", TradingHub.Common.UiCulture.Current)} {runner.ExecInstrument.Symbol} por orden" : "tamaño en cero";
         return $"en vivo · {runner.Account.Name} · {each}";
     }
 

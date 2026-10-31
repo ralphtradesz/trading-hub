@@ -102,7 +102,7 @@ internal sealed class MenuBar
     /// <summary>Un renglón del menú: clave estable, texto, si se puede tocar y qué hace (null = separador).</summary>
     private sealed record MenuLine(string Key, string? Text, bool Enabled = false, Action? Click = null);
 
-    private static readonly System.Globalization.CultureInfo Es = System.Globalization.CultureInfo.GetCultureInfo("es-AR");
+    private static readonly System.Globalization.CultureInfo Es = TradingHub.Common.UiCulture.Current;
 
     private static string Money(decimal v) => v.ToString("+#,##0.00;-#,##0.00;0.00", Es);
 

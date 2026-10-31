@@ -19,7 +19,7 @@ namespace TradingHub.App.Views;
 /// </summary>
 internal sealed class LiveTradesPanel : UserControl
 {
-    private static readonly CultureInfo Es = new("es-AR");
+    private static readonly CultureInfo Es = TradingHub.Common.UiCulture.Current;
     private static readonly CultureInfo Inv = CultureInfo.InvariantCulture;
     private const string Columns = "44,2*,96,58,118,84,118,84,76,58,74,96,88,88,70";
     private readonly AppServices _svc;

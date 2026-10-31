@@ -22,7 +22,7 @@ namespace TradingHub.App.Views;
 /// </summary>
 public sealed class AccountsView : UserControl
 {
-    private static readonly CultureInfo Es = new("es-AR");
+    private static readonly CultureInfo Es = TradingHub.Common.UiCulture.Current;
     private const string PositionColumns = "1.3*,0.7*,0.7*,1*,1*,1*,92";
     private const string OrderColumns = "64,1.1*,0.6*,0.9*,0.5*,0.9*,0.7*,0.9*,1.6*,92";
     private const string FillColumns = "130,1.2*,0.7*,0.7*,1*,0.8*";
@@ -434,8 +434,8 @@ public sealed class AccountsView : UserControl
         Card(0, "Saldo", s.Balance is { } bal ? Money(bal, false) : "—",
             a.Kind == AccountKind.Sim ? $"arrancó con {Money(s.StartBalance ?? 0, false)}" : s.Balance == null ? $"esperando a {(a.Kind == AccountKind.Tradovate ? "Tradovate" : "Rithmic")}…" : $"según {(a.Kind == AccountKind.Tradovate ? "Tradovate" : "Rithmic")}");
         Card(1, "Resultado del día", Money(s.DayPnl), $"realizado {Money(s.RealizedToday)} · abierto {Money(s.OpenPnl)}", Signed(s.DayPnl));
-        Card(2, "PnL abierto", Money(s.OpenPnl), open == 0 ? "sin posiciones abiertas" : $"{open} posición{(open > 1 ? "es" : "")} abierta{(open > 1 ? "s" : "")}", Signed(s.OpenPnl));
-        Card(3, "Realizado hoy", Money(s.RealizedToday), $"{s.TradesToday} operación{(s.TradesToday == 1 ? "" : "es")} cerrada{(s.TradesToday == 1 ? "" : "s")} hoy", Signed(s.RealizedToday));
+        Card(2, "PnL abierto", Money(s.OpenPnl), open == 0 ? "sin posiciones abiertas" : open == 1 ? "1 posición abierta" : $"{open} posiciones abiertas", Signed(s.OpenPnl));
+        Card(3, "Realizado hoy", Money(s.RealizedToday), s.TradesToday == 1 ? "1 operación cerrada hoy" : $"{s.TradesToday} operaciones cerradas hoy", Signed(s.RealizedToday));
         if (a.Kind == AccountKind.Sim)
             Card(4, "Resultado total", Money(s.Analysis.RealizedNet), $"{s.Analysis.Trades.Count} operaciones desde el inicio", Signed(s.Analysis.RealizedNet));
         else
@@ -637,7 +637,7 @@ public sealed class AccountsView : UserControl
             var g = new Grid { ColumnDefinitions = new ColumnDefinitions("78,*,92"), Margin = new Thickness(0, 2) };
             var date = new TextBlock { Text = d.Day.ToString("ddd dd/MM", Es), FontSize = 12, Foreground = Ui.Text2, VerticalAlignment = VerticalAlignment.Center };
             var bar = new Border { Height = 8, CornerRadius = new CornerRadius(4), Background = d.Net >= 0 ? Ui.Up : Ui.Down, HorizontalAlignment = HorizontalAlignment.Left, Width = max > 0 ? Math.Max(3, (double)(Math.Abs(d.Net) / max) * 110) : 3, VerticalAlignment = VerticalAlignment.Center };
-            ToolTip.SetTip(bar, $"{d.Count} operación{(d.Count == 1 ? "" : "es")}");
+            ToolTip.SetTip(bar, d.Count == 1 ? "1 operación" : $"{d.Count} operaciones");
             var net = new TextBlock { Text = Money(d.Net), FontSize = 12, TextAlignment = TextAlignment.Right, Foreground = Signed(d.Net), VerticalAlignment = VerticalAlignment.Center };
             Grid.SetColumn(bar, 1);
             Grid.SetColumn(net, 2);

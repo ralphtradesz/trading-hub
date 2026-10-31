@@ -595,7 +595,7 @@ public sealed class MainWindow : Window
         var today = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz).Date;
         if (local.Date == today) return "hoy";
         if (local.Date == today.AddDays(1)) return "mañana";
-        return local.ToString("ddd", new System.Globalization.CultureInfo("es-AR")).TrimEnd('.');
+        return local.ToString("ddd", TradingHub.Common.UiCulture.Current).TrimEnd('.');
     }
 
     private static string StatusName(FeedStatus s) => s switch

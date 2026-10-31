@@ -83,7 +83,23 @@ internal sealed class SettingsView : UserControl, IPage
             s.Save();
             AppTheme.Apply(mode);
         };
+        var language = new ComboBox { MinWidth = 200 };
+        foreach (var (code, name) in Localization.Lang.Available) language.Items.Add(new ComboBoxItem { Content = name, Tag = code });
+        language.SelectedItem = language.Items.OfType<ComboBoxItem>().FirstOrDefault(i => (string)i.Tag! == Localization.Lang.Current);
+        var restart = Ui.Button("Reiniciar ahora", MaterialIconKind.Restart, Localization.Lang.Restart);
+        restart.IsVisible = false;
+        var languageNote = new TextBlock { Text = "Se aplica al volver a abrir Trading Hub.", Classes = { "muted", "small" }, IsVisible = false, VerticalAlignment = VerticalAlignment.Center };
+        language.SelectionChanged += (_, _) =>
+        {
+            if (language.SelectedItem is not ComboBoxItem { Tag: string code }) return;
+            s.Language = code;
+            s.Save();
+            bool changed = code != Localization.Lang.Current;
+            restart.IsVisible = languageNote.IsVisible = changed;
+        };
+
         var general = Section("General", MaterialIconKind.TuneVariant,
+            Setting("Idioma", "Español, inglés o chino. Claude también te contesta en ese idioma.", Ui.V(6, language, Ui.H(8, languageNote, restart))),
             Setting("Apariencia", "Negro o blanco en toda la plataforma (también con el botón de sol/luna arriba). Los colores propios de cada gráfico se mantienen.", appearance),
             Setting("Zona horaria de los gráficos", "Horas del eje de tiempo, la cinta y las sesiones.", tz),
             Setting("Sonidos de alerta", "Alertas de precio, Big Trades y avisos de indicadores.", sounds)

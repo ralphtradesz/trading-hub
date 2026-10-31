@@ -659,7 +659,7 @@ internal sealed class DataView : UserControl, IPage
         long max = _selected.Days.Max(d => d.Bytes);
         foreach (var d in _selected.Days.OrderByDescending(d => d.Day))
         {
-            var date = new TextBlock { Text = d.Day.ToDateTime(TimeOnly.MinValue).ToString("ddd dd/MM/yyyy", CultureInfo.GetCultureInfo("es-AR")), Width = 130, VerticalAlignment = VerticalAlignment.Center };
+            var date = new TextBlock { Text = d.Day.ToDateTime(TimeOnly.MinValue).ToString("ddd dd/MM/yyyy", TradingHub.Common.UiCulture.Current), Width = 130, VerticalAlignment = VerticalAlignment.Center };
             var bar = new Border { Height = 6, CornerRadius = new CornerRadius(3), Background = Ui.Accent, Opacity = 0.75, HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Center, Width = Math.Max(4, 220.0 * d.Bytes / Math.Max(1, max)) };
             ToolTip.SetTip(bar, "Tamaño relativo (≈ cantidad de operaciones)");
             var size = new TextBlock { Text = Size(d.Bytes), Classes = { "muted", "small" }, Width = 70, VerticalAlignment = VerticalAlignment.Center, TextAlignment = TextAlignment.Right };

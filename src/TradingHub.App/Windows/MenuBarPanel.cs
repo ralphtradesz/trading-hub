@@ -16,7 +16,7 @@ namespace TradingHub.App.Windows;
 /// </summary>
 internal sealed class MenuBarPanel : Window
 {
-    private static readonly CultureInfo Es = CultureInfo.GetCultureInfo("es-AR");
+    private static readonly CultureInfo Es = TradingHub.Common.UiCulture.Current;
     private readonly AppServices _svc;
     private readonly MainWindow _main;
     private readonly TextBlock _status = new() { Classes = { "faint", "small" }, TextTrimming = TextTrimming.CharacterEllipsis };

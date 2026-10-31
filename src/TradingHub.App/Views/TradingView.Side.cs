@@ -756,7 +756,7 @@ public sealed partial class TradingView
             return null;
         }
 
-        string desc = $"{(dir == OrderDirections.Buy ? "COMPRA" : "VENTA")} {type switch { OrderTypes.Market => "a mercado", OrderTypes.Limit => "límite", _ => "stop" }} {qty} {acc.Instrument.Symbol}{(price > 0 ? " @ " + acc.Instrument.FormatPrice(price) : "")}";
+        string desc = $"{Localization.Lang.T(dir == OrderDirections.Buy ? "COMPRA" : "VENTA")} {Localization.Lang.T(type switch { OrderTypes.Market => "a mercado", OrderTypes.Limit => "límite", _ => "stop" })} {qty} {acc.Instrument.Symbol}{(price > 0 ? " @ " + acc.Instrument.FormatPrice(price) : "")}";
         if (!await ConfirmAsync(chart, acc, desc, qty: qty)) return null;
         bool entry = IsEntry(acc, dir);
         var order = type switch

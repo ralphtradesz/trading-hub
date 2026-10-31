@@ -31,5 +31,7 @@
   <ItemGroup>
     <None Remove="Assets/**" />
     <AvaloniaResource Include="Assets/**" Exclude="Assets/*.icns;Assets/icon-512.png" />
+    <!-- traducciones de la interfaz (las arma tools/TradingHub.I18n) -->
+    <EmbeddedResource Include="Localization/*.json" LogicalName="TradingHub.App.Localization.%(Filename)%(Extension)" WithCulture="false" />
   </ItemGroup>
 </Project>

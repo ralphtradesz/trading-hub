@@ -16,7 +16,7 @@ namespace TradingHub.App.Views;
 
 internal sealed partial class StrategiesView
 {
-    private static readonly CultureInfo Es = CultureInfo.GetCultureInfo("es-AR");
+    private static readonly CultureInfo Es = TradingHub.Common.UiCulture.Current;
 
     // configuración
     private readonly ComboBox _dataSource = new() { HorizontalAlignment = HorizontalAlignment.Stretch, PlaceholderText = "Sin datos guardados" };

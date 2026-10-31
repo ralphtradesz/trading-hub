@@ -482,7 +482,7 @@ public sealed class ClaudeCodeBridge
                      "--output-format", "stream-json",
                      "--verbose",
                      "--include-partial-messages",
-                     "--append-system-prompt", systemPrompt,
+                     "--append-system-prompt", systemPrompt + Localization.Lang.ForClaude,
                      "--tools", "Read,Write,Edit,MultiEdit,Glob,Grep",
                      "--permission-mode", "acceptEdits",
                      "--strict-mcp-config",

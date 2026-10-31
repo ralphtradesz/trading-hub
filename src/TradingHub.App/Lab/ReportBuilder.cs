@@ -30,7 +30,7 @@ internal sealed class ReportInput
 /// </summary>
 internal static class ReportBuilder
 {
-    private static readonly CultureInfo Es = CultureInfo.GetCultureInfo("es-AR");
+    private static readonly CultureInfo Es = TradingHub.Common.UiCulture.Current;
 
     private static string Money(decimal v, bool sign = false) => (sign && v > 0 ? "+" : "") + v.ToString("N2", Es);
     private static string Pct(decimal v, bool sign = false) => (sign && v > 0 ? "+" : "") + v.ToString("0.00", Es) + " %";

@@ -959,7 +959,7 @@ public sealed partial class TradingView : UserControl
         _replayPlay.Content = Ui.Icon(r.Paused || r.IsFinished ? MaterialIconKind.Play : MaterialIconKind.Pause, 18);
         _replaySpeed?.Select(r.Speed);
         var local = TimeZoneInfo.ConvertTimeFromUtc(r.Clock, _active.Model.Settings.TimeZone);
-        _replayClock.Text = r.IsFinished ? "Terminado" : local.ToString("ddd dd/MM HH:mm:ss", CultureInfo.GetCultureInfo("es-AR"));
+        _replayClock.Text = r.IsFinished ? "Terminado" : local.ToString("ddd dd/MM HH:mm:ss", TradingHub.Common.UiCulture.Current);
         _replayProgress.Value = r.Progress;
     }
 

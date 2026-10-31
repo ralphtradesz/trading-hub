@@ -148,6 +148,12 @@ public sealed class AppSettings
     /// <summary>Seguir con la tapa cerrada (pide tu contraseña de administrador) y, si se quiere, solo con el cargador.</summary>
     public bool KeepAwakeLidClosed { get; set; }
     public bool LidClosedOnlyOnPower { get; set; } = true;
+    /// <summary>Idioma de la interfaz (es, en, zh-CN). null = todavía no se eligió: se toma el del sistema al arrancar.</summary>
+    public string? Language { get; set; }
+
+    /// <summary>Si ya había ajustes guardados (alguien que ya usaba la app antes de que hubiera idiomas).</summary>
+    public static bool Saved => File.Exists(FilePath);
+
     public double WindowWidth { get; set; } = 1600;
     public double WindowHeight { get; set; } = 960;
     public List<string> Favorites { get; set; } = new() { "binance-futures:BTCUSDT", "binance-futures:ETHUSDT", "sim:SIM-BTC" };

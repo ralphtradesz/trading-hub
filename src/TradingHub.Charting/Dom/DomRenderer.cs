@@ -4,6 +4,7 @@ using TradingHub.Indicators;
 using TradingHub.Market;
 using TradingHub.Rendering.Context;
 using TradingHub.Trading;
+using TradingHub.Rendering;
 
 namespace TradingHub.Charting.Dom;
 
@@ -446,7 +447,7 @@ public sealed class DomRenderer
         float tx = align < 0 ? x + 4 : align > 0 ? x + w - 4 - tw : x + (w - tw) / 2;
         float ty = y + _rowH / 2 - (f.Metrics.Ascent + f.Metrics.Descent) / 2;
         _text.Color = color;
-        canvas.DrawText(s, tx, ty, f, _text);
+        canvas.DrawUiText(s, tx, ty, f, _text);
     }
 
     private void DrawHeader(SKCanvas canvas, SKFont font)
@@ -463,7 +464,7 @@ public sealed class DomRenderer
             canvas.Save();
             canvas.ClipRect(new SKRect(x, 0, x + w, _headerH));
             _text.Color = t.TextDim;
-            canvas.DrawText(label, x + w / 2 - RenderContext.MeasureWidth(font, label) / 2, baseline, font, _text);
+            canvas.DrawUiText(label, x + w / 2 - RenderContext.MeasureWidth(font, label) / 2, baseline, font, _text);
             canvas.Restore();
         }
 

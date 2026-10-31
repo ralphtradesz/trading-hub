@@ -3,6 +3,7 @@ using Avalonia.Input;
 using SkiaSharp;
 using TradingHub.Rendering.Context;
 using TradingHub.Strategies;
+using TradingHub.Rendering;
 
 namespace TradingHub.App.Controls;
 
@@ -80,7 +81,7 @@ public sealed class EquityChart : SkiaView
         if (_points.Count < 2 && _extra.Count == 0)
         {
             float tw = RenderContext.MeasureWidth(font, EmptyText);
-            canvas.DrawText(EmptyText, width / 2 - tw / 2, height / 2, font, text);
+            canvas.DrawUiText(EmptyText, width / 2 - tw / 2, height / 2, font, text);
             return;
         }
 
@@ -118,7 +119,7 @@ public sealed class EquityChart : SkiaView
             decimal v = min + (max - min) * i / 4;
             float y = MathF.Floor(Y(v)) + 0.5f;
             canvas.DrawLine(left, y, left + plotW, y, grid);
-            canvas.DrawText(fine ? v.ToString("#,##0.##", CultureInfo.GetCultureInfo("es-AR")) : Format(v), left + plotW + 8, y + 4, font, text);
+            canvas.DrawUiText(fine ? v.ToString("#,##0.##", TradingHub.Common.UiCulture.Current) : Format(v), left + plotW + 8, y + 4, font, text);
         }
 
         // capital inicial
@@ -184,7 +185,7 @@ public sealed class EquityChart : SkiaView
                 {
                     float x = MathF.Floor(X(t)) + 0.5f;
                     canvas.DrawLine(x, top, x, top + eqH, mark);
-                    canvas.DrawText(label, x + 3, top + 10, font, text);
+                    canvas.DrawUiText(label, x + 3, top + 10, font, text);
                 }
             }
 
@@ -198,7 +199,7 @@ public sealed class EquityChart : SkiaView
                 dd.Close();
                 using var ddFill = new SKPaint { IsAntialias = true, Color = Down.WithAlpha(90) };
                 canvas.DrawPath(dd, ddFill);
-                canvas.DrawText("DD " + Format(-maxDd), left + plotW + 8, ddTop + ddH, font, text);
+                canvas.DrawUiText("DD " + Format(-maxDd), left + plotW + 8, ddTop + ddH, font, text);
                 canvas.DrawLine(left, ddTop - 0.5f, left + plotW, ddTop - 0.5f, grid);
             }
 
@@ -210,7 +211,7 @@ public sealed class EquityChart : SkiaView
                 string s = t.ToString(span > TimeSpan.TicksPerDay * 3 ? "dd/MM" : span > TimeSpan.TicksPerDay ? "dd/MM HH:mm" : span > TimeSpan.TicksPerHour * 2 ? "HH:mm" : "HH:mm:ss", CultureInfo.InvariantCulture);
                 float x = left + plotW * i / 4;
                 float w = RenderContext.MeasureWidth(font, s);
-                canvas.DrawText(s, Math.Clamp(x - w / 2, left, left + plotW - w), height - 6, font, text);
+                canvas.DrawUiText(s, Math.Clamp(x - w / 2, left, left + plotW - w), height - 6, font, text);
             }
 
             // cursor
@@ -237,7 +238,7 @@ public sealed class EquityChart : SkiaView
                 using var box = new SKPaint { IsAntialias = true, Color = Box };
                 canvas.DrawRoundRect(new SKRect(lx, top, lx + lw, top + 20), 5, 5, box);
                 using var white = new SKPaint { IsAntialias = true, Color = new SKColor(0xE8, 0xEB, 0xF1) };
-                canvas.DrawText(label, lx + 7, top + 14, font, white);
+                canvas.DrawUiText(label, lx + 7, top + 14, font, white);
             }
         }
     }

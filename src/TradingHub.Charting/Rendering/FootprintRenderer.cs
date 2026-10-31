@@ -2,6 +2,7 @@ using SkiaSharp;
 using TradingHub.Data;
 using TradingHub.Indicators;
 using TradingHub.Rendering.Context;
+using TradingHub.Rendering;
 
 namespace TradingHub.Charting.Rendering;
 
@@ -251,11 +252,11 @@ internal sealed class FootprintRenderer
         string dTxt = (c.Delta > 0 ? "+" : "") + VolumeFormat.Compact(c.Delta, totDecimals);
         _text.Color = c.Delta >= 0 ? t.DeltaPositiveText : t.DeltaNegativeText;
         float w = RenderContext.MeasureWidth(totalsFont, dTxt);
-        canvas.DrawText(dTxt, slotLeft + slotW / 2 - w / 2, yHigh - 6, totalsFont, _text);
+        canvas.DrawUiText(dTxt, slotLeft + slotW / 2 - w / 2, yHigh - 6, totalsFont, _text);
         string vTxt = VolumeFormat.Compact(c.Volume, totDecimals);
         _text.Color = t.Text;
         w = RenderContext.MeasureWidth(totalsFont, vTxt);
-        canvas.DrawText(vTxt, slotLeft + slotW / 2 - w / 2, yLow + 6 - totalsFont.Metrics.Ascent, totalsFont, _text);
+        canvas.DrawUiText(vTxt, slotLeft + slotW / 2 - w / 2, yLow + 6 - totalsFont.Metrics.Ascent, totalsFont, _text);
     }
 
     /// <summary>Reparte el ancho de la vela entre las columnas.</summary>
@@ -477,7 +478,7 @@ internal sealed class FootprintRenderer
                 _text.Color = ColorOr(own, SKColors.White.WithAlpha(220));
                 float tw = RenderContext.MeasureWidth(x.Small, txt);
                 float tx = col.Direction == ProfileDirection.RightToLeft ? right - 2 - tw : col.Direction == ProfileDirection.Centered ? mid - tw / 2 : left + 2;
-                canvas.DrawText(txt, tx, yc + x.BaseOff, x.Small, _text);
+                canvas.DrawUiText(txt, tx, yc + x.BaseOff, x.Small, _text);
             }
         }
     }
@@ -519,13 +520,13 @@ internal sealed class FootprintRenderer
             var bidText = highlighted ? normal : ColorOr(col.BidTextColor, normal);
             var askText = highlighted ? normal : ColorOr(col.AskTextColor, normal);
             _text.Color = bidImb ? t.ImbalanceBid : (d.Bid == 0 ? bidText.WithAlpha(110) : bidText);
-            canvas.DrawText(b, mid - 4 - RenderContext.MeasureWidth(fb, b), baseline, fb, _text);
+            canvas.DrawUiText(b, mid - 4 - RenderContext.MeasureWidth(fb, b), baseline, fb, _text);
             _text.Color = askImb ? t.ImbalanceAsk : (d.Ask == 0 ? askText.WithAlpha(110) : askText);
-            canvas.DrawText(a, mid + 4, baseline, fa, _text);
+            canvas.DrawUiText(a, mid + 4, baseline, fa, _text);
             if (cell.Width >= 70)
             {
                 _text.Color = normal.WithAlpha(70);
-                canvas.DrawText("x", mid - RenderContext.MeasureWidth(x.Font, "x") / 2, baseline, x.Font, _text);
+                canvas.DrawUiText("x", mid - RenderContext.MeasureWidth(x.Font, "x") / 2, baseline, x.Font, _text);
             }
 
             return;
@@ -556,7 +557,7 @@ internal sealed class FootprintRenderer
             ColumnTextAlign.Right => cell.Right - 3 - w,
             _ => cell.MidX - w / 2,
         };
-        canvas.DrawText(txt, tx, baseline, f, _text);
+        canvas.DrawUiText(txt, tx, baseline, f, _text);
     }
 
     private static string ValueString(FootprintValue v, in LevelData d, int decimals) => v switch

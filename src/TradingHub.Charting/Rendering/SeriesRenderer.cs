@@ -6,6 +6,7 @@ using TradingHub.Indicators;
 using TradingHub.Indicators.Drawing;
 using TradingHub.Rendering.Context;
 using Color = System.Drawing.Color;
+using TradingHub.Rendering;
 
 namespace TradingHub.Charting.Rendering;
 
@@ -563,7 +564,7 @@ internal sealed class SeriesRenderer
                 }
 
                 _text.Color = lbl.Textcolor.ToSk();
-                canvas.DrawText(lbl.Text, left, top - font.Metrics.Ascent, font, _text);
+                canvas.DrawUiText(lbl.Text, left, top - font.Metrics.Ascent, font, _text);
             }
         }
     }

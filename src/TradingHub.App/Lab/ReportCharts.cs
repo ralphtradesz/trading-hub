@@ -1,6 +1,7 @@
 using System.Globalization;
 using SkiaSharp;
 using TradingHub.Strategies;
+using TradingHub.Rendering;
 
 namespace TradingHub.App.Lab;
 
@@ -19,7 +20,7 @@ internal static class ReportCharts
         new(37, 99, 235), new(234, 140, 0), new(22, 163, 107), new(168, 85, 247), new(220, 53, 69), new(14, 165, 233), new(132, 94, 54), new(236, 72, 153),
     };
 
-    private static readonly CultureInfo Es = CultureInfo.GetCultureInfo("es-AR");
+    private static readonly CultureInfo Es = TradingHub.Common.UiCulture.Current;
     private static SKTypeface Face(bool bold = false) => SKTypeface.FromFamilyName(TradingHub.Common.PlatformFonts.SansSkia, bold ? SKFontStyle.Bold : SKFontStyle.Normal) ?? SKTypeface.Default;
 
     private static string Compact(double v)
@@ -53,7 +54,7 @@ internal static class ReportCharts
     {
         using var font = new SKFont(Face(true), 22);
         using var p = new SKPaint { Color = TextC, IsAntialias = true };
-        c.DrawText(title, x, y, font, p);
+        c.DrawUiText(title, x, y, font, p);
     }
 
     /// <summary>Curva de capital arriba y drawdown ("bajo el agua") abajo. Series extra en colores (componentes).</summary>
@@ -89,7 +90,7 @@ internal static class ReportCharts
             float y = MathF.Round(Y(v)) + 0.5f;
             c.DrawLine(left, y, right, y, grid);
             var s = Compact(v);
-            c.DrawText(s, left - 12 - Tw(font, s), y + 6, font, axisText);
+            c.DrawUiText(s, left - 12 - Tw(font, s), y + 6, font, axisText);
         }
 
         // capital inicial
@@ -152,7 +153,7 @@ internal static class ReportCharts
             float y = MathF.Round(YD(v)) + 0.5f;
             c.DrawLine(left, y, right, y, grid);
             var s = v.ToString("0.#", Es) + "%";
-            c.DrawText(s, left - 12 - Tw(font, s), y + 6, font, axisText);
+            c.DrawUiText(s, left - 12 - Tw(font, s), y + 6, font, axisText);
         }
 
         using (var ddPath = new SKPath())
@@ -168,8 +169,8 @@ internal static class ReportCharts
         using (var label = new SKFont(Face(true), 16))
         using (var lp = new SKPaint { Color = AxisC, IsAntialias = true })
         {
-            c.DrawText("CAPITAL", left, top - 10, label, lp);
-            c.DrawText("DRAWDOWN", left, ddTop - 12, label, lp);
+            c.DrawUiText("CAPITAL", left, top - 10, label, lp);
+            c.DrawUiText("DRAWDOWN", left, ddTop - 12, label, lp);
         }
 
         // fechas
@@ -179,7 +180,7 @@ internal static class ReportCharts
             var t = t0.AddSeconds(span * i / nDates);
             var s = t.ToString(span > 86400 * 200 ? "MMM yyyy" : span > 86400 * 3 ? "dd MMM" : "dd/MM HH:mm", Es);
             float x = X(t);
-            c.DrawText(s, Math.Clamp(x - Tw(font, s) / 2, left, right - Tw(font, s)), H - 34, font, axisText);
+            c.DrawUiText(s, Math.Clamp(x - Tw(font, s) / 2, left, right - Tw(font, s)), H - 34, font, axisText);
         }
 
         // leyenda de componentes
@@ -192,7 +193,7 @@ internal static class ReportCharts
             {
                 using var sw = new SKPaint { Color = col, IsAntialias = true };
                 c.DrawRoundRect(new SKRect(lx, ly - 11, lx + 22, ly - 3), 2, 2, sw);
-                c.DrawText(text, lx + 30, ly, lf, lt);
+                c.DrawUiText(text, lx + 30, ly, lf, lt);
                 ly += 24;
             }
 
@@ -217,7 +218,7 @@ internal static class ReportCharts
         using var bold = new SKFont(Face(true), 17);
         using var tp = new SKPaint { Color = AxisC, IsAntialias = true };
         for (int m = 0; m < 13; m++)
-            c.DrawText(months[m], left + m * cellW + cellW / 2 - Tw(font, months[m]) / 2, top - 12, font, tp);
+            c.DrawUiText(months[m], left + m * cellW + cellW / 2 - Tw(font, months[m]) / 2, top - 12, font, tp);
         double maxAbs = years.SelectMany(y => y.MonthPercent).Where(v => v.HasValue).Select(v => Math.Abs((double)v!.Value)).DefaultIfEmpty(1).Max();
         maxAbs = Math.Max(maxAbs, 0.5);
         for (int r = 0; r < years.Count; r++)
@@ -225,7 +226,7 @@ internal static class ReportCharts
             var y = years[r];
             float yy = top + r * rowH;
             using var yp = new SKPaint { Color = TextC, IsAntialias = true };
-            c.DrawText(y.Year.ToString(CultureInfo.InvariantCulture), 40, yy + rowH / 2f + 6, bold, yp);
+            c.DrawUiText(y.Year.ToString(CultureInfo.InvariantCulture), 40, yy + rowH / 2f + 6, bold, yp);
             for (int m = 0; m < 13; m++)
             {
                 decimal? v = m < 12 ? y.MonthPercent[m] : y.YearPercent;
@@ -243,7 +244,7 @@ internal static class ReportCharts
                 if (!v.HasValue) continue;
                 var s = (v.Value >= 0 ? "+" : "") + v.Value.ToString("0.0", Es) + "%";
                 using var txt = new SKPaint { Color = Math.Abs((double)v.Value) / maxAbs > 0.6 ? SKColors.White : TextC, IsAntialias = true };
-                c.DrawText(s, rect.MidX - Tw(m == 12 ? bold : font, s) / 2, rect.MidY + 6, m == 12 ? bold : font, txt);
+                c.DrawUiText(s, rect.MidX - Tw(m == 12 ? bold : font, s) / 2, rect.MidY + 6, m == 12 ? bold : font, txt);
             }
         }
 
@@ -270,7 +271,7 @@ internal static class ReportCharts
             float y = bottom - (float)(v / max) * (bottom - top);
             c.DrawLine(left, y, right, y, grid);
             var s = v.ToString("0", Es);
-            c.DrawText(s, left - 12 - Tw(font, s), y + 6, font, tp);
+            c.DrawUiText(s, left - 12 - Tw(font, s), y + 6, font, tp);
         }
 
         for (int i = 0; i < buckets.Count; i++)
@@ -285,11 +286,11 @@ internal static class ReportCharts
             {
                 var n = b.Count.ToString(CultureInfo.InvariantCulture);
                 using var np = new SKPaint { Color = TextC, IsAntialias = true };
-                c.DrawText(n, rect.MidX - Tw(font, n) / 2, rect.Top - 8, font, np);
+                c.DrawUiText(n, rect.MidX - Tw(font, n) / 2, rect.Top - 8, font, np);
             }
 
             var lbl = Compact((double)mid);
-            c.DrawText(lbl, rect.MidX - Tw(font, lbl) / 2, bottom + 28, font, tp);
+            c.DrawUiText(lbl, rect.MidX - Tw(font, lbl) / 2, bottom + 28, font, tp);
         }
 
         return Encode(surface);
@@ -320,7 +321,7 @@ internal static class ReportCharts
             float y = Y(v);
             c.DrawLine(left, y, right, y, grid);
             var s = Compact(v);
-            c.DrawText(s, left - 12 - Tw(font, s), y + 6, font, tp);
+            c.DrawUiText(s, left - 12 - Tw(font, s), y + 6, font, tp);
         }
 
         foreach (var curve in curves)
@@ -339,7 +340,7 @@ internal static class ReportCharts
         using (var cap = new SKPaint { Color = AxisC, StrokeWidth = 1.5f, PathEffect = SKPathEffect.CreateDash(new[] { 8f, 6f }, 0), IsAntialias = true })
             c.DrawLine(left, Y((double)capital), right, Y((double)capital), cap);
         var lbl = "operaciones →";
-        c.DrawText(lbl, right - Tw(font, lbl), H - 22, font, tp);
+        c.DrawUiText(lbl, right - Tw(font, lbl), H - 22, font, tp);
         return Encode(surface);
     }
 
@@ -362,9 +363,9 @@ internal static class ReportCharts
         {
             string l = $"{i + 1}. {labels[i]}";
             while (Tw(font, l) > labelW - 50 && l.Length > 4) l = l[..^2];
-            c.DrawText(l, 40, top + i * cell + cell / 2f + 6, font, tp);
+            c.DrawUiText(l, 40, top + i * cell + cell / 2f + 6, font, tp);
             var num = (i + 1).ToString(CultureInfo.InvariantCulture);
-            c.DrawText(num, left + i * cell + cell / 2f - Tw(font, num) / 2, top - 14, font, tp);
+            c.DrawUiText(num, left + i * cell + cell / 2f - Tw(font, num) / 2, top - 14, font, tp);
             for (int j = 0; j < n; j++)
             {
                 double v = corr[i, j];
@@ -374,7 +375,7 @@ internal static class ReportCharts
                 c.DrawRoundRect(rect, 6, 6, fill);
                 var s = v.ToString("0.00", Es);
                 using var txt = new SKPaint { Color = Math.Abs(v) > 0.6 && i != j ? SKColors.White : TextC, IsAntialias = true };
-                c.DrawText(s, rect.MidX - Tw(bold, s) / 2, rect.MidY + 7, bold, txt);
+                c.DrawUiText(s, rect.MidX - Tw(bold, s) / 2, rect.MidY + 7, bold, txt);
             }
         }
 

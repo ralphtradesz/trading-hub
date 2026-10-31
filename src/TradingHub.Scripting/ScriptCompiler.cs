@@ -126,7 +126,7 @@ public sealed class ScriptCompiler
             {
                 var span = d.Location.GetLineSpan();
                 return new ScriptDiagnostic(span.Path ?? "", span.StartLinePosition.Line + 1, span.StartLinePosition.Character + 1,
-                    d.Severity == DiagnosticSeverity.Error ? "error" : "advertencia", d.Id, d.GetMessage(System.Globalization.CultureInfo.GetCultureInfo("es")));
+                    d.Severity == DiagnosticSeverity.Error ? "error" : "advertencia", d.Id, d.GetMessage(TradingHub.Common.UiCulture.Current));
             })
             .ToList();
 

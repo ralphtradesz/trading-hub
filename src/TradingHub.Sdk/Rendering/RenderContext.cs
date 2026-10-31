@@ -74,6 +74,9 @@ namespace TradingHub.Rendering.Context
         public static float MeasureWidth(SKFont font, string text)
         {
             if (string.IsNullOrEmpty(text)) return 0;
+            // como se dibuja: traducido y, si a la letra le faltan caracteres (chino), con la del sistema
+            text = UiText.Tr(text);
+            font = UiText.FontFor(text, font) ?? font;
             var paint = MeasurePaints.GetOrAdd(font, f => new SKPaint
             {
                 Typeface = f.Typeface,
@@ -157,7 +160,7 @@ namespace TradingHub.Rendering.Context
                     _ => rect.Left,
                 };
                 float baseline = y0 + i * lineH - f.Metrics.Ascent;
-                _canvas.DrawText(line, x, baseline, f, _text);
+                _canvas.DrawUiText(line, x, baseline, f, _text);
             }
 
             if (clip) _canvas.Restore();
@@ -182,13 +185,13 @@ namespace TradingHub.Rendering.Context
             _text.Color = color.ToSkColor();
             if (text.IndexOf('\n') < 0)
             {
-                _canvas.DrawText(text, x, y - f.Metrics.Ascent, f, _text);
+                _canvas.DrawUiText(text, x, y - f.Metrics.Ascent, f, _text);
                 return;
             }
 
             var lines = text.Replace("\r", "").Split('\n');
             for (int i = 0; i < lines.Length; i++)
-                _canvas.DrawText(lines[i], x, y + i * f.Spacing - f.Metrics.Ascent, f, _text);
+                _canvas.DrawUiText(lines[i], x, y + i * f.Spacing - f.Metrics.Ascent, f, _text);
         }
 
         // ------------------------------------------------------------------ líneas

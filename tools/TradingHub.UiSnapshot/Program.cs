@@ -185,10 +185,26 @@ static void SanitizeConnections(string path, string fakeUri, string keychainFile
     File.WriteAllText(keychainFile, System.Text.Json.JsonSerializer.Serialize(secrets));
 }
 
+// TRADINGHUB_LANG=en o zh-CN: las escenas en otro idioma, y por cada página la lista de lo que quedó en español
+var sceneLang = Environment.GetEnvironmentVariable("TRADINGHUB_LANG");
+if (!string.IsNullOrEmpty(sceneLang)) TradingHub.App.Localization.Lang.Load(sceneLang);
 AppBuilder.Configure<App>()
     .UseSkia()
     .UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false })
     .SetupWithoutStarting();
+TradingHub.App.Localization.Lang.Install();
+
+// textos a la vista que siguen en español (con tildes o palabras muy del español): para completar las traducciones
+void ReportUntranslated(Avalonia.Controls.Window w, string page)
+{
+    if (string.IsNullOrEmpty(sceneLang)) return;
+    var spanish = new System.Text.RegularExpressions.Regex(@"[áéíóúñ¿¡]|\b(de|del|la|las|los|el|que|con|para|una|sin|por|más|cuando|desde|hasta)\b", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+    var left = Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(w).OfType<Avalonia.Controls.TextBlock>()
+        .Where(t => t.IsEffectivelyVisible && !string.IsNullOrWhiteSpace(t.Text) && spanish.IsMatch(t.Text!))
+        .Select(t => t.Text!.Replace("\n", " ⏎ ")).Distinct().ToList();
+    File.WriteAllLines(Path.Combine(outDir, $"sin-traducir-{page.Replace('+', '_')}.txt"), left);
+    Console.WriteLine($"Sin traducir en {page}: {left.Count}");
+}
 
 MainWindow? window = null;
 
@@ -1113,6 +1129,7 @@ foreach (var page in pages)
     var path = Path.Combine(outDir, page.Replace('+', '_') + ".png");
     frame?.Save(path);
     Console.WriteLine(frame != null ? $"Captura: {path}" : $"No se pudo capturar {page}");
+    ReportUntranslated(window, page);
 }
 
 App.Services.Shutdown();

@@ -68,7 +68,7 @@ public sealed class ClaudeAgent
             "--output-format", "stream-json",
             "--verbose",
             "--model", req.Model,
-            "--append-system-prompt", req.SystemPrompt,
+            "--append-system-prompt", req.SystemPrompt + Localization.Lang.ForClaude,
             "--permission-mode", req.PermissionMode,
             "--strict-mcp-config",
         };

@@ -477,7 +477,7 @@ public static class ValidationGate
         var m = wf.OutSampleMetrics;
         var checks = new List<GateCheck>();
         void Add(string name, GateStatus st, string text) => checks.Add(new GateCheck(name, st, text));
-        var es = CultureInfo.GetCultureInfo("es-AR");
+        var es = TradingHub.Common.UiCulture.Current;
 
         int trades = m.TotalTrades;
         Add("Muestra", trades >= input.MinTrades ? GateStatus.Pass : GateStatus.Fail,

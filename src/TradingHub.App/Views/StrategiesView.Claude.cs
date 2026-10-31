@@ -36,6 +36,7 @@ internal sealed partial class StrategiesView
     private readonly ToggleButton _labToggle = new();
     private readonly TextBlock _claudeHint = new() { Classes = { "faint", "small" }, TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 10, 0) };
     private HashSet<string> _reportsBefore = new();
+    private Control? _workingNote;
 
     // conversación actual (se guarda en el historial) y ventana aparte del chat
     private ChatConversation _conv = new();
@@ -181,11 +182,12 @@ internal sealed partial class StrategiesView
         ScrollChatToEnd();
     }
 
-    private void AddNote(MaterialIconKind icon, string text, IBrush? color = null)
+    private Control AddNote(MaterialIconKind icon, string text, IBrush? color = null)
     {
         var row = Ui.H(6, Ui.Icon(icon, 14, color ?? Ui.Text2), new TextBlock { Text = text, Classes = { "small" }, Foreground = color ?? Ui.Text2, TextWrapping = TextWrapping.Wrap, MaxWidth = 330 });
         _chat.Children.Add(row);
         ScrollChatToEnd();
+        return row;
     }
 
     private void ScrollChatToEnd() => Dispatcher.UIThread.Post(() => _chatScroll.ScrollToEnd(), DispatcherPriority.Background);
@@ -227,7 +229,7 @@ internal sealed partial class StrategiesView
         _editor.IsReadOnly = true;
         bool lab = _labToggle.IsChecked == true;
         _reportsBefore = Lab.ReportStore.List().Select(r => r.Path).ToHashSet();
-        AddNote(MaterialIconKind.ProgressClock, "Claude está trabajando…");
+        _workingNote = AddNote(MaterialIconKind.ProgressClock, "Claude está trabajando…");
         await _claude.SendAsync(prompt, AppPaths.Strategies, ClaudeCodeBridge.StrategySystemPrompt + ClaudeCodeBridge.IndicatorSystemPrompt + (lab ? ClaudeCodeBridge.LabSystemPrompt : ""), lab,
             new[] { AppPaths.UserIndicators, Directory.CreateDirectory(Lab.LabServer.CapturesDir).FullName });
     }
@@ -338,10 +340,11 @@ internal sealed partial class StrategiesView
         AddNote(icon, $"{verb} {name}".Trim());
     }
 
+    // la nota se guarda: su texto se ve traducido, así que no se la puede buscar por el texto
     private void RemoveWorkingNote()
     {
-        var note = _chat.Children.OfType<StackPanel>().LastOrDefault(p => p.Children.Count == 2 && p.Children[1] is TextBlock { Text: "Claude está trabajando…" });
-        if (note != null) _chat.Children.Remove(note);
+        if (_workingNote != null) _chat.Children.Remove(_workingNote);
+        _workingNote = null;
     }
 
     /// <summary>Si Claude cambió el archivo abierto, se muestra al instante en el editor.</summary>

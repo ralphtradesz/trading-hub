@@ -2,6 +2,7 @@ using System.Globalization;
 using SkiaSharp;
 using TradingHub.Data;
 using TradingHub.Rendering.Context;
+using TradingHub.Rendering;
 
 namespace TradingHub.Charting.Drawings;
 
@@ -333,10 +334,10 @@ public sealed class ChartDrawing
                 if (ShowPriceLabel)
                 {
                     string pl = Format(p0.Price, decimals);
-                    canvas.DrawText(pl, plot.Right - 4 - RenderContext.MeasureWidth(font, pl), y0 - 3, font, text);
+                    canvas.DrawUiText(pl, plot.Right - 4 - RenderContext.MeasureWidth(font, pl), y0 - 3, font, text);
                 }
 
-                if (label.Length > 0) canvas.DrawText(label, plot.Left + 6, y0 - 4, labelFont, text);
+                if (label.Length > 0) canvas.DrawUiText(label, plot.Left + 6, y0 - 4, labelFont, text);
                 if (IsAlert) DrawBell(canvas, plot.Right - (ShowPriceLabel ? 70 : 14), y0 - 8, Color);
                 break;
             case DrawingKind.HorizontalRay:
@@ -344,15 +345,15 @@ public sealed class ChartDrawing
                 if (ShowPriceLabel)
                 {
                     string pl = Format(p0.Price, decimals);
-                    canvas.DrawText(pl, plot.Right - 4 - RenderContext.MeasureWidth(font, pl), y0 - 3, font, text);
+                    canvas.DrawUiText(pl, plot.Right - 4 - RenderContext.MeasureWidth(font, pl), y0 - 3, font, text);
                 }
 
-                if (label.Length > 0) canvas.DrawText(label, x0 + 6, y0 - 4, labelFont, text);
+                if (label.Length > 0) canvas.DrawUiText(label, x0 + 6, y0 - 4, labelFont, text);
                 if (IsAlert) DrawBell(canvas, x0 + 8, y0 - 8, Color);
                 break;
             case DrawingKind.VerticalLine:
                 canvas.DrawLine(x0, plot.Top, x0, layout.Panels[^1].Rect.Bottom, stroke);
-                if (label.Length > 0) canvas.DrawText(label, x0 + 5, plot.Top + labelFont.Size + 4, labelFont, text);
+                if (label.Length > 0) canvas.DrawUiText(label, x0 + 5, plot.Top + labelFont.Size + 4, labelFont, text);
                 break;
             case DrawingKind.TrendLine:
             case DrawingKind.Ray:
@@ -365,7 +366,7 @@ public sealed class ChartDrawing
                 if (label.Length > 0)
                 {
                     float w = RenderContext.MeasureWidth(labelFont, label);
-                    canvas.DrawText(label, (x0 + x1) / 2 - w / 2, (y0 + y1) / 2 - 6, labelFont, text);
+                    canvas.DrawUiText(label, (x0 + x1) / 2 - w / 2, (y0 + y1) / 2 - 6, labelFont, text);
                 }
 
                 break;
@@ -377,7 +378,7 @@ public sealed class ChartDrawing
                 if (ExtendLeft) r.Left = plot.Left;
                 canvas.DrawRect(r, fill);
                 canvas.DrawRect(r, stroke);
-                if (label.Length > 0) canvas.DrawText(label, r.Left + 5, r.Top + labelFont.Size + 3, labelFont, text);
+                if (label.Length > 0) canvas.DrawUiText(label, r.Left + 5, r.Top + labelFont.Size + 3, labelFont, text);
                 break;
             }
             case DrawingKind.FibRetracement:
@@ -395,13 +396,13 @@ public sealed class ChartDrawing
                     stroke.PathEffect = lvl.Value is 0 or 1 ? Effect() : SKPathEffect.CreateDash(new[] { 4f, 3f }, 0);
                     canvas.DrawLine(left, y, right, y, stroke);
                     string l = lvl.Value.ToString("0.###", CultureInfo.InvariantCulture) + (ShowPriceLabel ? $"  ({Format(price, decimals)})" : "");
-                    canvas.DrawText(l, left + 3, y - 3, font, text);
+                    canvas.DrawUiText(l, left + 3, y - 3, font, text);
                 }
 
                 break;
             }
             case DrawingKind.Text:
-                canvas.DrawText(string.IsNullOrEmpty(Text) ? "Texto" : Text, x0, y0, labelFont, text);
+                canvas.DrawUiText(string.IsNullOrEmpty(Text) ? "Texto" : Text, x0, y0, labelFont, text);
                 break;
             case DrawingKind.Ruler:
             {
@@ -508,7 +509,7 @@ public sealed class ChartDrawing
         canvas.DrawRoundRect(new SKRect(bx, top, bx + w, top + h), 4, 4, box);
         using var text = new SKPaint { IsAntialias = true, Color = color };
         for (int i = 0; i < lines.Length; i++)
-            canvas.DrawText(lines[i], bx + 6, top + 4 + font.Spacing * i - font.Metrics.Ascent, font, text);
+            canvas.DrawUiText(lines[i], bx + 6, top + 4 + font.Spacing * i - font.Metrics.Ascent, font, text);
     }
 
     private static void DrawBell(SKCanvas canvas, float x, float y, SKColor color)

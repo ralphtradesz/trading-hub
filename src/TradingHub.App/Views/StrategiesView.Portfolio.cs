@@ -32,7 +32,7 @@ internal sealed partial class StrategiesView
     }
 
     private static string PortfolioFile => Path.Combine(StrategyStore.Root, "portafolio.json");
-    private static readonly CultureInfo EsAr = CultureInfo.GetCultureInfo("es-AR");
+    private static readonly CultureInfo EsAr = TradingHub.Common.UiCulture.Current;
 
     private PortfolioState _pf = new();
     private readonly List<PortfolioComponent> _pfComponents = new();

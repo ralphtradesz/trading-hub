@@ -52,7 +52,7 @@ internal sealed class LiveEntry
 /// <summary>La próxima orden de una estrategia: cuántos contratos, de cuál y si es el micro (con su equivalente en el mini).</summary>
 internal readonly record struct OrderPlan(decimal Units, string Symbol, string SignalSymbol, bool Micro, bool AtMinimum, decimal Equivalent)
 {
-    private static readonly System.Globalization.CultureInfo Es = System.Globalization.CultureInfo.GetCultureInfo("es-AR");
+    private static readonly System.Globalization.CultureInfo Es = TradingHub.Common.UiCulture.Current;
 
     /// <summary>«5 MNQ», «1 NQ» o «en cero».</summary>
     public string Text => Units <= 0 ? "en cero" : $"{Units.ToString("0.####", Es)} {Symbol}";

@@ -5,6 +5,7 @@ using Avalonia.Platform;
 using Avalonia.Rendering.SceneGraph;
 using Avalonia.Skia;
 using SkiaSharp;
+using TradingHub.Rendering;
 
 namespace TradingHub.App.Controls;
 
@@ -44,7 +45,7 @@ public abstract class SkiaView : Control
         catch (Exception ex)
         {
             using var p = new SKPaint { Color = SKColors.OrangeRed, IsAntialias = true };
-            canvas.DrawText("Error al dibujar: " + ex.Message, 10, 20, p);
+            canvas.DrawText(UiText.Tr("Error al dibujar: ") + ex.Message, 10, 20, p);
             CrashLog.Write(ex);
         }
 

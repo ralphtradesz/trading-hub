@@ -7,6 +7,7 @@ using TradingHub.Indicators;
 using TradingHub.Rendering.Context;
 using TradingHub.Trading;
 using Rectangle = System.Drawing.Rectangle;
+using TradingHub.Rendering;
 
 namespace TradingHub.Charting.Rendering;
 
@@ -440,7 +441,7 @@ public sealed class ChartRenderer
                 if (y < panel.Rect.Top + 6 || y > panel.Rect.Bottom - 6) continue;
                 string s = v.ToString("F" + dec, CultureInfo.InvariantCulture);
                 if (!panel.IsPrice && Math.Abs(v) >= 100000) s = VolumeFormat.Compact((decimal)v, 1);
-                canvas.DrawText(s, axis.Left + 6, y - font.Metrics.Ascent / 2 - font.Metrics.Descent / 2, font, _text);
+                canvas.DrawUiText(s, axis.Left + 6, y - font.Metrics.Ascent / 2 - font.Metrics.Descent / 2, font, _text);
                 _stroke.Color = t.AxisLine;
                 canvas.DrawLine(axis.Left, MathF.Floor(y) + 0.5f, axis.Left + 3, MathF.Floor(y) + 0.5f, _stroke);
             }
@@ -531,7 +532,7 @@ public sealed class ChartRenderer
             string q = (m.Buy ? "+" : "−") + m.Quantity.ToString("0.####", CultureInfo.InvariantCulture);
             _text.Color = m.Buy ? t.PositionLong : t.PositionShort;
             float ty = m.Buy ? y + size * 1.6f + font.Spacing : y - size * 1.6f - 3;
-            canvas.DrawText(q, x - RenderContext.MeasureWidth(font, q) / 2, ty, font, _text);
+            canvas.DrawUiText(q, x - RenderContext.MeasureWidth(font, q) / 2, ty, font, _text);
         }
 
         canvas.Restore();
@@ -592,7 +593,7 @@ public sealed class ChartRenderer
             float w = RenderContext.MeasureWidth(font, label);
             // a la derecha del recuadro si entra; si no (operación pegada al borde), a la izquierda
             float lx = x1 + 4 + w <= plot.Right ? x1 + 4 : Math.Max(plot.Left + 2, x0 - 4 - w);
-            canvas.DrawText(label, lx, labelY + font.Size / 3, font, _text);
+            canvas.DrawUiText(label, lx, labelY + font.Size / 3, font, _text);
         }
 
         // si los dos niveles quedan muy cerca, las etiquetas se separan
@@ -643,7 +644,7 @@ public sealed class ChartRenderer
         _stroke.StrokeWidth = 1;
         canvas.DrawRoundRect(box, _stroke);
         _text.Color = win;
-        canvas.DrawText(f.Label, lx + 7, ly + 14, labelFont, _text);
+        canvas.DrawUiText(f.Label, lx + 7, ly + 14, labelFont, _text);
         float cx = lx + w - closeW / 2 - 2, cy = ly + 10;
         _stroke.Color = win.WithAlpha(90);
         canvas.DrawLine(lx + w - closeW - 2, ly + 4, lx + w - closeW - 2, ly + 16, _stroke);
@@ -751,7 +752,7 @@ public sealed class ChartRenderer
 
                 if (!labels || sg.Label.Length == 0) continue;
                 _text.Color = sg.Entry ? st.Color : color;
-                canvas.DrawText(sg.Label, x - RenderContext.MeasureWidth(font, sg.Label) / 2, ty, font, _text);
+                canvas.DrawUiText(sg.Label, x - RenderContext.MeasureWidth(font, sg.Label) / 2, ty, font, _text);
             }
         }
 
@@ -857,7 +858,7 @@ public sealed class ChartRenderer
                     if (sh.Text.Length > 0)
                     {
                         _text.Color = sh.Color;
-                        canvas.DrawText(sh.Text, x0 + 4, y0 - 4, font, _text);
+                        canvas.DrawUiText(sh.Text, x0 + 4, y0 - 4, font, _text);
                     }
 
                     break;
@@ -877,7 +878,7 @@ public sealed class ChartRenderer
                     {
                         _text.Color = sh.Color;
                         float w = RenderContext.MeasureWidth(font, sh.Text);
-                        canvas.DrawText(sh.Text, Math.Max(x0 + 4, plot.Right - w - 6), y - 4, font, _text);
+                        canvas.DrawUiText(sh.Text, Math.Max(x0 + 4, plot.Right - w - 6), y - 4, font, _text);
                     }
 
                     break;
@@ -932,7 +933,7 @@ public sealed class ChartRenderer
                     if (sh.Text.Length > 0 && layout.BarWidth >= 5)
                     {
                         _text.Color = sh.Color;
-                        canvas.DrawText(sh.Text, x - RenderContext.MeasureWidth(font, sh.Text) / 2, ty, font, _text);
+                        canvas.DrawUiText(sh.Text, x - RenderContext.MeasureWidth(font, sh.Text) / 2, ty, font, _text);
                     }
 
                     break;
@@ -941,7 +942,7 @@ public sealed class ChartRenderer
                 {
                     _text.Color = sh.Color;
                     float x = X(sh.Time1), y = main.Y(sh.Price1);
-                    canvas.DrawText(sh.Text, x - RenderContext.MeasureWidth(font, sh.Text) / 2, y, font, _text);
+                    canvas.DrawUiText(sh.Text, x - RenderContext.MeasureWidth(font, sh.Text) / 2, y, font, _text);
                     break;
                 }
             }
@@ -990,7 +991,7 @@ public sealed class ChartRenderer
             _fill.Color = c;
             canvas.DrawRoundRect(r, 3, 3, _fill);
             _text.Color = SKColors.Black;
-            canvas.DrawText(label, r.Left + 6, y - font.Metrics.Ascent / 2 - font.Metrics.Descent / 2, font, _text);
+            canvas.DrawUiText(label, r.Left + 6, y - font.Metrics.Ascent / 2 - font.Metrics.Descent / 2, font, _text);
             DrawAxisTag(canvas, layout, y, inst.FormatPrice(price), c, SKColors.Black, font);
             return r;
         }
@@ -1008,7 +1009,7 @@ public sealed class ChartRenderer
                 _stroke.Color = color;
                 canvas.DrawRoundRect(r, 3, 3, _stroke);
                 _text.Color = color;
-                canvas.DrawText(text, r.Left + 5, r.MidY - font.Metrics.Ascent / 2 - font.Metrics.Descent / 2, font, _text);
+                canvas.DrawUiText(text, r.Left + 5, r.MidY - font.Metrics.Ascent / 2 - font.Metrics.Descent / 2, font, _text);
                 state.Handles.Add(new BracketHandle(r, new BracketDrag(entry, role), true));
                 x = r.Left - 4;
             }
@@ -1124,7 +1125,7 @@ public sealed class ChartRenderer
         _fill.Color = bg;
         canvas.DrawRect(r, _fill);
         _text.Color = fg;
-        canvas.DrawText(text, axis.Left + 6, y - font.Metrics.Ascent / 2 - font.Metrics.Descent / 2, font, _text);
+        canvas.DrawUiText(text, axis.Left + 6, y - font.Metrics.Ascent / 2 - font.Metrics.Descent / 2, font, _text);
     }
 
     private static readonly (TimeSpan Step, string Format)[] TimeSteps =
@@ -1145,7 +1146,7 @@ public sealed class ChartRenderer
         var series = model.Series;
         if (series.Count == 0 || layout.LastVisible < layout.FirstVisible) return res;
         var tz = model.Settings.TimeZone;
-        var es = CultureInfo.GetCultureInfo("es-AR");
+        var es = TradingHub.Common.UiCulture.Current;
 
         // estimación de tiempo por píxel
         int f = layout.FirstVisible, l = layout.LastVisible;
@@ -1209,7 +1210,7 @@ public sealed class ChartRenderer
             var f = major ? bold : font;
             float w = RenderContext.MeasureWidth(f, text);
             _text.Color = major ? t.Text : t.AxisText;
-            canvas.DrawText(text, x - w / 2, ax.Top + 16, f, _text);
+            canvas.DrawUiText(text, x - w / 2, ax.Top + 16, f, _text);
         }
     }
 
@@ -1233,7 +1234,7 @@ public sealed class ChartRenderer
                 {
                     if (hover) DrawLegendRowBack(canvas, t, new SKRect(x - 4, y - 12, x + nameW + 62, y + 5));
                     _text.Color = slot.Error != null ? new SKColor(255, 110, 110) : slot.Visible ? t.TextDim : t.TextDim.WithAlpha(110);
-                    canvas.DrawText(name, x, y, font, _text);
+                    canvas.DrawUiText(name, x, y, font, _text);
                     state.Legend.Add(new LegendHit(new SKRect(x - 4, y - 12, x + nameW + 4, y + 5), slot, LegendAction.Name));
                     x += nameW + 8;
                     if (hover || !slot.Visible) x = DrawLegendIcons(canvas, state, slot, x, y, hover, t.TextDim) + 6;
@@ -1248,7 +1249,7 @@ public sealed class ChartRenderer
                         if (lastBar < 0) continue;
                         string v = SeriesRenderer.FormatValue(model, panel, s[lastBar]);
                         _text.Color = (s.Colors.Has(lastBar) ? s.Colors[lastBar] : s.Color).ToSk();
-                        canvas.DrawText(v, x, y, font, _text);
+                        canvas.DrawUiText(v, x, y, font, _text);
                         x += RenderContext.MeasureWidth(font, v) + 8;
                         if (x > panel.Rect.Right - 80) break;
                     }
@@ -1257,7 +1258,7 @@ public sealed class ChartRenderer
                 if (slot.Error != null)
                 {
                     _text.Color = new SKColor(255, 110, 110);
-                    canvas.DrawText("⚠ " + slot.Error, x, y, font, _text);
+                    canvas.DrawUiText("⚠ " + slot.Error, x, y, font, _text);
                 }
 
                 x += 10;
@@ -1279,7 +1280,7 @@ public sealed class ChartRenderer
         {
             _text.Color = t.Text;
             string head = $"{model.Instrument.Symbol}  ·  {model.Period.DisplayName}  ·  {model.Instrument.Exchange}";
-            canvas.DrawText(head, x, y, title, _text);
+            canvas.DrawUiText(head, x, y, title, _text);
             y += 17;
         }
         else
@@ -1311,10 +1312,10 @@ public sealed class ChartRenderer
             foreach (var (label, value, color) in parts)
             {
                 _text.Color = t.TextDim;
-                canvas.DrawText(label, x, y, font, _text);
+                canvas.DrawUiText(label, x, y, font, _text);
                 x += RenderContext.MeasureWidth(font, label) + 4;
                 _text.Color = color;
-                canvas.DrawText(value, x, y, font, _text);
+                canvas.DrawUiText(value, x, y, font, _text);
                 x += RenderContext.MeasureWidth(font, value) + 12;
             }
 
@@ -1335,7 +1336,7 @@ public sealed class ChartRenderer
             _text.Color = t.TextDim.WithAlpha(150);
             int total = overlay.Count + model.Strategies.Count;
             string n = total == 1 ? "1 indicador" : $"{total} indicadores";
-            canvas.DrawText(n, nx, y, font, _text);
+            canvas.DrawUiText(n, nx, y, font, _text);
             state.Legend.Add(new LegendHit(new SKRect(nx - 2, y - 11, nx + RenderContext.MeasureWidth(font, n) + 2, y + 4), null, LegendAction.Collapse));
             return;
         }
@@ -1349,7 +1350,7 @@ public sealed class ChartRenderer
             bool hover = row.Contains(mx, my);
             if (hover) DrawLegendRowBack(canvas, t, new SKRect(nx - 4, y - 12, nx + w + 62, y + 5));
             _text.Color = slot.Error != null ? new SKColor(255, 110, 110) : slot.Visible ? t.TextDim : t.TextDim.WithAlpha(110);
-            canvas.DrawText(name, nx, y, font, _text);
+            canvas.DrawUiText(name, nx, y, font, _text);
             state.Legend.Add(new LegendHit(new SKRect(nx - 4, y - 12, nx + w + 4, y + 5), slot, LegendAction.Name));
             if (hover || !slot.Visible) DrawLegendIcons(canvas, state, slot, nx + w + 8, y, hover, t.TextDim);
             y += 16;
@@ -1376,7 +1377,7 @@ public sealed class ChartRenderer
                 canvas.DrawPath(tri, _fill);
             }
 
-            canvas.DrawText(name, nx + 12, y, font, _text);
+            canvas.DrawUiText(name, nx + 12, y, font, _text);
             state.Legend.Add(new LegendHit(new SKRect(nx - 4, y - 12, nx + w + 4, y + 5), null, LegendAction.Name, st));
             if (hover || !st.Visible) DrawLegendIcons(canvas, state, null, nx + w + 8, y, hover, t.TextDim, st);
             y += 16;
@@ -1514,13 +1515,13 @@ public sealed class ChartRenderer
         if (bar >= 0 && bar < model.Series.Count)
         {
             var local = TimeZoneInfo.ConvertTimeFromUtc(model.Series[bar].Time, model.Settings.TimeZone);
-            string ts = local.ToString(model.Period.IsTimeBased && model.Period.ApproxDuration >= TimeSpan.FromDays(1) ? "ddd dd MMM yyyy" : "ddd dd MMM  HH:mm:ss", CultureInfo.GetCultureInfo("es-AR"));
+            string ts = local.ToString(model.Period.IsTimeBased && model.Period.ApproxDuration >= TimeSpan.FromDays(1) ? "ddd dd MMM yyyy" : "ddd dd MMM  HH:mm:ss", TradingHub.Common.UiCulture.Current);
             float w = RenderContext.MeasureWidth(font, ts) + 12;
             var r = new SKRect(cx - w / 2, layout.TimeAxis.Top + 1, cx + w / 2, layout.TimeAxis.Bottom - 1);
             _fill.Color = t.CrosshairLabelBack;
             canvas.DrawRect(r, _fill);
             _text.Color = t.CrosshairLabelText;
-            canvas.DrawText(ts, r.Left + 6, r.Top + 16, font, _text);
+            canvas.DrawUiText(ts, r.Left + 6, r.Top + 16, font, _text);
         }
     }
 
@@ -1558,13 +1559,13 @@ public sealed class ChartRenderer
         if (x >= layout.Plot.Left && x <= layout.Plot.Right)
         {
             var local = TimeZoneInfo.ConvertTimeFromUtc(time, model.Settings.TimeZone);
-            string ts = local.ToString(model.Period.IsTimeBased && model.Period.ApproxDuration >= TimeSpan.FromDays(1) ? "ddd dd MMM yyyy" : "ddd dd MMM  HH:mm", CultureInfo.GetCultureInfo("es-AR"));
+            string ts = local.ToString(model.Period.IsTimeBased && model.Period.ApproxDuration >= TimeSpan.FromDays(1) ? "ddd dd MMM yyyy" : "ddd dd MMM  HH:mm", TradingHub.Common.UiCulture.Current);
             float w = RenderContext.MeasureWidth(font, ts) + 12;
             var r = new SKRect(x - w / 2, layout.TimeAxis.Top + 1, x + w / 2, layout.TimeAxis.Bottom - 1);
             _fill.Color = t.CrosshairLabelBack;
             canvas.DrawRect(r, _fill);
             _text.Color = t.CrosshairLabelText;
-            canvas.DrawText(ts, r.Left + 6, r.Top + 16, font, _text);
+            canvas.DrawUiText(ts, r.Left + 6, r.Top + 16, font, _text);
         }
     }
 
@@ -1595,6 +1596,6 @@ public sealed class ChartRenderer
         using var b = new SKPaint { IsAntialias = true, Color = t.PanelSeparator, Style = SKPaintStyle.Stroke };
         canvas.DrawRoundRect(r, 8, 8, b);
         _text.Color = t.Text;
-        canvas.DrawText(msg, r.Left + 18, r.MidY + 5, font, _text);
+        canvas.DrawUiText(msg, r.Left + 18, r.MidY + 5, font, _text);
     }
 }
