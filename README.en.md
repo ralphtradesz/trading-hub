@@ -12,6 +12,8 @@ Created by [**@ralphtradesz**](https://x.com/ralphtradesz)
 
 Using Windows? **[Download the installer](https://github.com/ralphtradesz/trading-hub/releases/latest/download/TradingHub-Setup-x64.exe)** ([how to install it](#using-windows)).
 
+Using a Mac (M1 or newer)? **[Download the app](https://github.com/ralphtradesz/trading-hub/releases/latest/download/TradingHub-Mac.zip)**: unzip it, drag it to Applications, and the first time open it from System Settings → Privacy & Security → "Open Anyway".
+
 [![License MIT + Commons Clause](https://img.shields.io/badge/license-MIT%20%2B%20Commons%20Clause-amber.svg)](LICENSE)
 ![macOS Apple Silicon](https://img.shields.io/badge/macOS-Apple%20Silicon-black.svg)
 ![Windows 10 and 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6.svg)
